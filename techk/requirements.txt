@@ -3,12 +3,12 @@ chardet==3.0.4
 Django==2.0.5
 idna==2.6
 pip==10.0.1
-psycopg2==2.7.4
+psycopg2==2.8.4
 pytz==2018.4
 requests==2.18.4
 setuptools==39.1.0
 urllib3==1.22
-wheel==0.31.1
+wheel==0.33.6
 pytest==3.5.1
 Django==2.0.5
 beautifulsoup4==4.6.0
