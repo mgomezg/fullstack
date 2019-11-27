@@ -1,13 +1,16 @@
 from bs4 import BeautifulSoup
-import requests
-from ..base.models import Book, Category
-import re
+from .models import Log
 from django.db import IntegrityError
+from ..base.models import Book, Category
+import requests
+import re
 
 class Scraper:
 
     def __init__(self, basePath, actualPath):
         
+        self.createLog('__init__', 'Begin Scraper.py', 'Flag')
+
         self.basePath = basePath
         self.actualPath = actualPath
 
@@ -21,7 +24,9 @@ class Scraper:
         # get books in all pages
         self.getBooksRecursively(main_BSHtml)
 
-    def getBSHtml(self, url): # Convierte el HTML obtenido en una instancia de BeautifulSoup
+        self.createLog('__init__', 'Finish Scraper.py', 'Flag')
+
+    def getBSHtml(self, url): # get new instance of BeautifulSoup from url
         html = requests.get(url).text
         return BeautifulSoup(html, 'html.parser')
 
@@ -40,6 +45,7 @@ class Scraper:
         try:
             return nextPage[0].get('href')
         except (IndexError, AttributeError, TypeError) as e:
+            self.createLog('getNextPage', str(e) , 'Exception')
             return None
 
     # Get book information and save it in BD
@@ -48,31 +54,50 @@ class Scraper:
         BSHtml = self.getBSHtml(bookURL)
 
 
-        # try to get category name
+        # try to get category name - REQUIRED (if has exception, it won't save this book)
         try:
             breadcrum = BSHtml.find(class_='breadcrumb')
             category_name = breadcrum.select('li > a')[2].get_text()
         except (IndexError, AttributeError, TypeError) as e:
-            category_name = "Default"
+            self.createLog('getCategoryName', str(e) , 'Exception')
+            return False
 
-        # try to get title
+        # try to get title - REQUIRED (if has exception, it won't save this book)
         try:
             title = BSHtml.select('.product_main > h1')[0].get_text()
         except (IndexError, AttributeError, TypeError) as e:
-            title = "notitle"
+            self.createLog('getTitle', str(e) , 'Exception')
+            return False
+
+
+        # try to get price - REQUIRED (if has exception, it won't save this book)
+        try:
+            price = BSHtml.select('.product_main > .price_color')[0].get_text()
+            price = float(price[2:-1])
+        except (IndexError, AttributeError, TypeError) as e:
+            self.createLog('getPrice', str(e) , 'Exception')
+            return False
+
+        # try to get UPC - REQUIRED (if has exception, it won't save this book)
+        try:
+            upc = BSHtml.find('th', text='UPC').findNext('td').get_text()
+        except (IndexError, AttributeError, TypeError) as e:
+            self.createLog('getUPC', str(e) , 'Exception')
+            return False
+        
+        # get category - REQUIRED (if has exception, it won't save this book)
+        try:
+            category = Category.objects.get(name=category_name)
+        except (IndexError, AttributeError, TypeError) as e:
+            self.createLog('getCategory', str(e) , 'Exception')
+            return False
 
         # try to get thumbnail
         try:
             thumbnail = BSHtml.select('#product_gallery .thumbnail img')[0].get('src')
         except (IndexError, AttributeError, TypeError) as e:
+            self.createLog('getThumbnail', str(e) , 'Exception')
             thumbnail = "noimage"
-
-        # try to get price
-        try:
-            price = BSHtml.select('.product_main > .price_color')[0].get_text()
-            price = float(price[2:-1])
-        except (IndexError, AttributeError, TypeError) as e:
-            price = 0
 
         # try to get stock available
         try:
@@ -80,27 +105,17 @@ class Scraper:
             stock = re.findall(r'\d+', stock)
             stock = stock[0]
         except (IndexError, AttributeError, TypeError) as e:
+            self.createLog('getStock', str(e) , 'Exception')
             stock = 0
 
         # try to get description 
         try:
             description = BSHtml.select('#product_description')[0].findNext('p').get_text()
         except (IndexError, AttributeError, TypeError) as e:
+            self.createLog('getDescription', str(e) , 'Exception')
             description = "Sin descripción"
 
-        # try to get UPC
-        try:
-            upc = BSHtml.find('th', text='UPC').findNext('td').get_text()
-        except (IndexError, AttributeError, TypeError) as e:
-            upc = "NaN"
-        
-        # get category
-        try:
-            category = Category.objects.get(name=category_name)
-        except (IndexError, AttributeError, TypeError) as e:
-            category = None
-            print('Sin categoria')
-
+        # Save book
         try:
             newBook = Book()
             newBook.title = title
@@ -111,9 +126,9 @@ class Scraper:
             newBook.description = description
             newBook.upc = upc
             newBook.save()
-            print('Se agregó el libro:', newBook.title)
+            self.createLog('createBook', 'Se agregó el libro: '+ newBook.title , 'Log')
         except IntegrityError as e:
-            print('No fue posible crear el libro:',str(e))
+            self.createLog('createBook', 'No fue posible crear el libro: ' + title + '. ' +str(e) , 'Exception')
 
     
     # Save category in BD
@@ -122,9 +137,9 @@ class Scraper:
             newCategory = Category()
             newCategory.name = category.get_text().strip()
             newCategory.save()
-            print('Se agregó la categoría:',newCategory.name)
+            self.createLog('createCategory', 'Se agregó la categoría: '+ newCategory.name , 'Log')
         except IntegrityError as e:
-            print('No fue posible crear la categoría:', str(e))
+            self.createLog('createCategory', 'No fue posible crear la categoría: ' + category.get_text().strip() + '. ' +str(e) , 'Exception')
             
 
     def getBooksRecursively(self, BSHtml):
@@ -142,3 +157,10 @@ class Scraper:
             nextPageUrl = self.basePath+nextPage
             nextBSHtml = self.getBSHtml(nextPageUrl)
             self.getBooksRecursively(nextBSHtml)
+    
+    def createLog(self, pos, message, logType):
+        log = Log()
+        log.pos = pos
+        log.message = message 
+        log.log_type = logType
+        log.save()
