@@ -15,11 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from apps.base.views import index
+from apps.base.views import index, BookViewSet, CategoryViewSet
+from rest_framework import routers
 
+router = routers.DefaultRouter()
+router.register(r'api/books', BookViewSet)
+router.register(r'api/categories', CategoryViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'', index),
-    url(r'^api-auth/', include('rest_framework.urls'))
+    url(r'^', include(router.urls)),
+    url(r'^scraper$', index),
+    #url(r'^api-auth/', include('rest_framework.urls'))
 ]

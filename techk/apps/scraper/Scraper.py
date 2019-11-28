@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from .models import Log
+from urllib.parse import urlparse
 from django.db import IntegrityError
 from ..base.models import Book, Category
 import requests
@@ -13,6 +14,11 @@ class Scraper:
 
         self.basePath = basePath
         self.actualPath = actualPath
+
+        # get domain for images url
+
+        parsePath = urlparse(self.basePath)
+        self.imagePath = '{uri.scheme}://{uri.netloc}/'.format(uri=parsePath)
 
         # get BeautifulSoup Instance for aux
         main_BSHtml = self.getBSHtml(basePath+actualPath)
@@ -95,6 +101,7 @@ class Scraper:
         # try to get thumbnail
         try:
             thumbnail = BSHtml.select('#product_gallery .thumbnail img')[0].get('src')
+            thumbnail = self.imagePath+thumbnail.replace('../../','')
         except (IndexError, AttributeError, TypeError) as e:
             self.createLog('getThumbnail', str(e) , 'Exception')
             thumbnail = "noimage"
