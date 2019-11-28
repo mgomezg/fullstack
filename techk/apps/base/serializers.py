@@ -3,6 +3,9 @@ from .models import *
 
 
 class BookSerializer(serializers.ModelSerializer):
+
+    category = serializers.StringRelatedField()
+    
     class Meta:
         model = Book
         fields = ('id','title','category','thumbnail','description','price','stock','upc')

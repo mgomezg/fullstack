@@ -9,9 +9,9 @@ from .Scraper import Scraper
 def begin(request):
     try:
         scraper = Scraper("http://books.toscrape.com/catalogue/","page-50.html")
-        return JsonResponse('{"status":"ok"}')
+        return JsonResponse('[{"status":"ok"}]', safe=False)
     except Exception as e:
-        return JsonResponse('{"status":"error", "exception":'+str(e)+'}')
+        return JsonResponse('[{"status":"error", "exception":'+str(e)+'}]', safe=False)
 
 # Create your views here.
 class LogViewSet(viewsets.ModelViewSet):
