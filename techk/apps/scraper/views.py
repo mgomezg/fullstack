@@ -15,7 +15,7 @@ def begin(request):
         return JsonResponse(response_data)
     except Exception as e:
         response_data = {
-            'status' : 'ok',
+            'status' : 'error',
             'exception': str(e),
         }
         return JsonResponse(response_data)

@@ -5,11 +5,19 @@ import MUIDataTable from "mui-datatables";
 import {
     CircularProgress
   } from '@material-ui/core'
+import Axios from 'axios';
 
 class BooksTable extends Component{
 
     render(){
         const columns = [
+            {
+                name: "#",
+                options:{
+                    filter:false,
+                    viewColumns: false,
+                }
+            },
             {
                 name: "Nombre",
                 options:{
@@ -70,7 +78,21 @@ class BooksTable extends Component{
             selectableRows: 'single',
             onRowsDelete: (RowsDeleted, data) => {
                 const id = RowsDeleted.data.map(d => d.dataIndex);
-                console.log(this.props.data[id]);
+                var item = this.props.data[id];
+
+                var itemId = item[0];
+                var th = this;
+
+                this.serverRequest = Axios.delete('api/books/'+itemId)
+                .then(function(response){
+                  if(response.data.status === 'ok'){
+                      return true;
+                  }else{
+                      return false;
+                  }
+                }).catch(function(error){
+                    return false;
+                })
             },
         };
 
@@ -78,13 +100,12 @@ class BooksTable extends Component{
         return (
             <div className="bgDataTable">
                 
-                <CircularProgress size={72} className="datatable-spinner" />
+                {this.props.dataTableSearching && <CircularProgress size={72} className="datatable-spinner" /> }
                 <MUIDataTable className="datatable-books"
-                    title={"Books List"}
+                    title={"Lista de libros"}
                     data={this.props.data}
                     columns={columns}
                     options={options}
-                    
                 />
             </div>
         );

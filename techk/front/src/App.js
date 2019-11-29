@@ -7,6 +7,8 @@ import axios from 'axios'
 
 class App extends Component {
 
+  intervalID = 0;
+
   constructor(){
     super();
     this.updateData();
@@ -14,16 +16,19 @@ class App extends Component {
   state = {
     data:[],
     scraperRunning: false,
-    dataTableSearching: false,
+    dataTableSearching: true,
   }
   
 
   handleScrap(){
+
+    this.updateWhileSearching()
     var th = this;
     th.setState({
       scraperRunning : true,
       data :[],
     });
+    
     this.serverRequest = axios.get('/scraper')
       .then(function(response){
         if(response.data.status === 'ok'){
@@ -39,23 +44,17 @@ class App extends Component {
       })
   }
 
-  clearData(){
-    this.setState({
-      data : [],
-    });
-  }
-
   updateData(){
     var th = this;
     th.setState({
+      data : [],
       dataTableSearching : true
-  });
-
+    })
   var newdata = [];
   this.serverRequest = axios.get('/api/books/?format=json')
     .then(function(response){
       response.data.map(function(value, index){
-        var item = [value.title, value.category, value.description, value.price, value.stock, value.upc, value.thumbnail];
+        var item = [value.id, value.title, value.category, value.description, value.price, value.stock, value.upc, value.thumbnail];
         newdata.push(item)
       });
     }).finally(function(){
@@ -65,7 +64,22 @@ class App extends Component {
       });
     })
   }
-  // setData={this.updateData.bind(this)}
+
+  updateWhileSearching(){
+    this.updateData()
+    var th = this;
+    this.intervalID = setInterval(function(){
+
+      if(!th.state.scraperRunning){
+        clearInterval(th.intervalID);
+        return false;
+      }
+
+      th.updateData()
+
+    },10000);
+  }
+
   render(){
     return (
       <Grid container justify="center" spacing={1} className="w-100 pt-4">
