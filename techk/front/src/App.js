@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 import Home from './Home';
 import BooksTable from './BooksTable';
-import { Container, Grid } from '@material-ui/core';
+import { AppBar, Grid, Toolbar, Typography, Snackbar, SnackbarContent } from '@material-ui/core';
 import axios from 'axios'
+
 
 class App extends Component {
 
@@ -17,6 +18,8 @@ class App extends Component {
     data:[],
     scraperRunning: false,
     dataTableSearching: true,
+    snackBarOpen: false,
+    snackBarClass: '.info',
   }
   
 
@@ -32,9 +35,9 @@ class App extends Component {
     this.serverRequest = axios.get('/scraper')
       .then(function(response){
         if(response.data.status === 'ok'){
-          console.log('OK');
+          th.createSnackBar('Se ha completado el proceso con éxito!','success');
         }else{
-          console.log('error');
+          th.createSnackBar('Ha ocurrido un error en el servidor al realizar el proceso!','danger');
         }
       }).catch(function (error) {
         console.log('error: ' + error);
@@ -44,9 +47,11 @@ class App extends Component {
       })
   }
 
+
+
   updateData(){
     var th = this;
-    th.setState({
+    this.setState({
       data : [],
       dataTableSearching : true
     })
@@ -56,6 +61,7 @@ class App extends Component {
       response.data.map(function(value, index){
         var item = [value.id, value.title, value.category, value.description, value.price, value.stock, value.upc, value.thumbnail];
         newdata.push(item)
+        return false;
       });
     }).finally(function(){
       th.setState({
@@ -66,7 +72,6 @@ class App extends Component {
   }
 
   updateWhileSearching(){
-    this.updateData()
     var th = this;
     this.intervalID = setInterval(function(){
 
@@ -80,15 +85,49 @@ class App extends Component {
     },10000);
   }
 
+  createSnackBar(snackBarMessage, snackBarClass){
+    this.setState({
+      snackBarOpen: true,
+      snackBarClass: snackBarClass,
+      snackBarMessage: snackBarMessage, 
+    });
+  }
+  
+  closeSnackBar(){
+    this.setState({ open: false });
+  }
+
   render(){
     return (
-      <Grid container justify="center" spacing={1} className="w-100 pt-4">
-        <Grid item xs={11} md={10}>
-          <Home handleScrap={this.handleScrap.bind(this)} scraperRunning={this.state.scraperRunning}/>
+      <Grid>
+        <AppBar position="static">
+          <Toolbar variant="dense">
+            <Typography variant="h6" color="inherit">
+              Scraper!
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Grid container justify="center" spacing={1} className="w-100 pt-4">
+          <Grid item xs={11} md={10}>
+            <Home handleScrap={this.handleScrap.bind(this)} scraperRunning={this.state.scraperRunning}/>
+          </Grid>
+          <Grid item xs={11} md={10}>
+            <BooksTable data={this.state.data} dataTableSearching={this.state.dataTableSearching}/>
+          </Grid>
         </Grid>
-        <Grid item xs={11} md={10}>
-          <BooksTable data={this.state.data} dataTableSearching={this.state.dataTableSearching}/>
-        </Grid>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          open={this.state.snackBarOpen}
+          onClose={this.closeSnackBar}
+        >
+          <SnackbarContent
+            className={this.state.snackBarClass}
+            message={<span id="message-id">{this.state.snackBarMessage}</span>}
+          />
+        </Snackbar>
       </Grid>
     );
   }

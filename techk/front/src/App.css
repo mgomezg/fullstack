@@ -80,3 +80,11 @@
   position: relative;
   top:0;
 }
+
+.danger{
+  background-color: #d32f2f !important;
+}
+
+.success{
+  background-color: #43a047 !important;
+}

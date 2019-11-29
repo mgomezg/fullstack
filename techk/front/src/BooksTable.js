@@ -62,7 +62,7 @@ class BooksTable extends Component{
                 options:{
                     filter:false,
                     customBodyRender: (value, tableMeta, updateValue) => (
-                        <img src={value} className="book-image"/>
+                        <img src={value} className="book-image" alt="imagebook"/>
                     )
                 }
             },
@@ -79,14 +79,12 @@ class BooksTable extends Component{
             onRowsDelete: (RowsDeleted, data) => {
                 const id = RowsDeleted.data.map(d => d.dataIndex);
                 var item = this.props.data[id];
-
                 var itemId = item[0];
-                var th = this;
 
                 this.serverRequest = Axios.delete('api/books/'+itemId)
                 .then(function(response){
                   if(response.data.status === 'ok'){
-                      return true;
+                    return true;
                   }else{
                       return false;
                   }
