@@ -28,6 +28,8 @@ class App extends Component {
       .then(function(response){
         if(response.data.status === 'ok'){
           console.log('OK');
+        }else{
+          console.log('error');
         }
       }).catch(function (error) {
         console.log('error: ' + error);
@@ -42,33 +44,35 @@ class App extends Component {
       data : [],
     });
   }
+
   updateData(){
     var th = this;
     th.setState({
       dataTableSearching : true
-    });
-    var newdata = [];
-    this.serverRequest = axios.get('/api/books/?format=json')
-      .then(function(response){
-        response.data.map(function(value, index){
-          var item = [value.title, value.category, value.description, value.price, value.stock, value.upc, value.thumbnail];
-          newdata.push(item)
-        });
-      }).finally(function(){
-        th.setState({
-          data : newdata,
-          dataTableSearching: false
-        });
-      })
+  });
+
+  var newdata = [];
+  this.serverRequest = axios.get('/api/books/?format=json')
+    .then(function(response){
+      response.data.map(function(value, index){
+        var item = [value.title, value.category, value.description, value.price, value.stock, value.upc, value.thumbnail];
+        newdata.push(item)
+      });
+    }).finally(function(){
+      th.setState({
+        data : newdata,
+        dataTableSearching: false
+      });
+    })
   }
   // setData={this.updateData.bind(this)}
   render(){
     return (
       <Grid container justify="center" spacing={1} className="w-100 pt-4">
-        <Grid item xs={10} md={10}>
+        <Grid item xs={11} md={10}>
           <Home handleScrap={this.handleScrap.bind(this)} scraperRunning={this.state.scraperRunning}/>
         </Grid>
-        <Grid item xs={10} md={10}>
+        <Grid item xs={11} md={10}>
           <BooksTable data={this.state.data} dataTableSearching={this.state.dataTableSearching}/>
         </Grid>
       </Grid>

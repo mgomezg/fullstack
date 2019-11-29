@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 import MUIDataTable from "mui-datatables";
 
+import {
+    CircularProgress
+  } from '@material-ui/core'
 
 class BooksTable extends Component{
 
@@ -58,18 +61,32 @@ class BooksTable extends Component{
         ];
     
         const options = {
-        filterType: 'select',
-        print: false,
-        download: false
+            filterType: 'select',
+            print: false,
+            download: false,
+            responsive: 'scrollMaxHeight',
+            viewColumns: false,
+            rowsPerPageOptions: [],
+            selectableRows: 'single',
+            onRowsDelete: (RowsDeleted, data) => {
+                const id = RowsDeleted.data.map(d => d.dataIndex);
+                console.log(this.props.data[id]);
+            },
         };
-        return ( 
-            <MUIDataTable className="datatable-books"
-                title={"Books List"}
-                data={this.props.data}
-                columns={columns}
-                options={options}
+
+
+        return (
+            <div className="bgDataTable">
                 
-            />
+                <CircularProgress size={72} className="datatable-spinner" />
+                <MUIDataTable className="datatable-books"
+                    title={"Books List"}
+                    data={this.props.data}
+                    columns={columns}
+                    options={options}
+                    
+                />
+            </div>
         );
     }
 

@@ -54,3 +54,29 @@
 .book-image{
   height: 200px;
 }
+
+.scrapper-spinner{
+  position: absolute;
+  top:-6;
+  left: -25;
+  
+}
+
+.datatable-spinner{
+  position: absolute;
+  top: calc(50% - 72px);
+  left: calc(50% - 36px);
+  z-index: 1000 !important;
+  
+}
+
+.bgDataTable{
+  position: relative;
+}
+
+.overlay{
+  background-color: #000000a6;
+  z-index: 1000 !important;
+  position: relative;
+  top:0;
+}
