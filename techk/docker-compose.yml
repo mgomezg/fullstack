@@ -8,10 +8,12 @@ services:
       - .:/code
     ports:
       - "8000:8000"
+    networks:
+      - webappnetwork
   frontend:
     build: ./front
     volumes:
-      - ./front:/app
+      - ./front:/front
       - /app/node_modules
     ports:
       - "3000:3000"
@@ -20,3 +22,8 @@ services:
     depends_on:
       - backend
     command: npm start
+    networks:
+      - webappnetwork
+networks:
+    webappnetwork:
+        driver: bridge
