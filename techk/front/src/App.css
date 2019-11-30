@@ -81,10 +81,7 @@
   top:0;
 }
 
-.danger{
-  background-color: #d32f2f !important;
-}
-
-.success{
-  background-color: #43a047 !important;
+.footer{
+  margin-top: 30px;
+  background-color: #1a1c21 !important;
 }

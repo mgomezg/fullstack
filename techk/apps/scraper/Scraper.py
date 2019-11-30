@@ -10,6 +10,12 @@ class Scraper:
 
     def __init__(self, basePath, actualPath):
         
+        #delete data
+        Book.objects.all().delete()
+        Category.objects.all().delete()
+        Log.objects.all().delete()
+
+        #Begin Scraper
         self.createLog('__init__', 'Begin Scraper.py', 'Flag')
 
         self.basePath = basePath

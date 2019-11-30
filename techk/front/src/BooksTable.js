@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import MUIDataTable from "mui-datatables";
+import toast from 'toasted-notes' 
+import 'toasted-notes/src/styles.css';
 
 import {
     CircularProgress
@@ -84,16 +86,18 @@ class BooksTable extends Component{
                 this.serverRequest = Axios.delete('api/books/'+itemId)
                 .then(function(response){
                   if(response.data.status === 'ok'){
+                    toast.notify("Se ha borrado el libro con exito!",{position: 'top-right',});
                     return true;
-                  }else{
-                      return false;
-                  }
+                }else{
+                        toast.notify("Ha ocurrido un error en el servidor.",{position: 'top-right',});
+                        return false;
+                    }
                 }).catch(function(error){
+                    toast.notify("Ha ocurrido un error al intentar eliminar el libro.",{position: 'top-right',});
                     return false;
                 })
             },
         };
-
 
         return (
             <div className="bgDataTable">
