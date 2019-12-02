@@ -1,21 +1,21 @@
 version: '3'
 
 services:
-  db:
-    image: postgres
-    networks:
-      - webappnetwork
+  # db: #
+  #   image: postgres
+  #   networks:
+  #     - webappnetwork
   backend:
     build: .
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: bash -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
       - "8000:8000"
     networks:
       - webappnetwork
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
     user: root
   frontend:
     build: ./front

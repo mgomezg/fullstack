@@ -28,6 +28,12 @@ class LogsTable extends Component{
             {
                 name: "Mensaje",
                 options:{
+                    filter:false,
+                }
+            },
+            {
+                name: "Tipo",
+                options:{
                     filter:true,
                 }
             },

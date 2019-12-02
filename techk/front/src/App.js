@@ -81,7 +81,7 @@ class App extends Component {
     this.serverRequest = axios.get('/api/logs/?format=json')
       .then(function(response){
         response.data.map(function(value, index){
-          var item = [value.id, value.pos, value.message];
+          var item = [value.id, value.pos, value.message, value.log_type];
           logsData.push(item)
           return false;
         });

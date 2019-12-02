@@ -12,11 +12,11 @@ import re
 
 class Scraper:
 
-    def __init__(self, basePath, actualPath):
+    def __init__(self, basePath, actualPath, workers=2):
 
         #config
         sys.setrecursionlimit(10000)
-
+        self.workers = workers
         #delete data
         Book.objects.all().delete()
         Category.objects.all().delete()
@@ -56,7 +56,7 @@ class Scraper:
 
     def getBooks(self, booksActicle):
         books = booksActicle.select('article > h3 > a')
-        p = Pool(processes=2)
+        p = Pool(processes=self.workers)
         p.map(self.saveBook, books)
 
     def getNextPage(self, pagerContainer):

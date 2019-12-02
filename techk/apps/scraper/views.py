@@ -8,7 +8,8 @@ from .Scraper import Scraper
 
 def begin(request):
     try:
-        scraper = Scraper("http://books.toscrape.com/catalogue/","page-50.html")
+        workers = 2 # for Pool Processes
+        scraper = Scraper("http://books.toscrape.com/catalogue/","page-1.html", workers)
         response_data = {
             'status' : 'ok'
         }

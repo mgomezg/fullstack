@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import MUIDataTable from "mui-datatables";
-import toast from 'toasted-notes' 
+import toast from 'toasted-notes'
 import 'toasted-notes/src/styles.css';
 
 import {
@@ -42,7 +42,7 @@ class BooksTable extends Component{
                 }
             },
             {
-                name: "Precio",
+                name: "Precio (£)",
                 options:{
                     filter:false
                 }
@@ -69,7 +69,7 @@ class BooksTable extends Component{
                 }
             },
         ];
-    
+
         const options = {
             filterType: 'select',
             print: false,
@@ -101,7 +101,7 @@ class BooksTable extends Component{
 
         return (
             <div className="bgDataTable">
-                
+
                 {this.props.dataTableSearching && <CircularProgress size={72} className="datatable-spinner" /> }
                 <MUIDataTable className="datatable-books"
                     title={"Lista de libros"}
