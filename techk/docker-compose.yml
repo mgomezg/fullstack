@@ -16,6 +16,7 @@ services:
       - webappnetwork
     depends_on:
       - db
+    user: root
   frontend:
     build: ./front
     volumes:
@@ -30,6 +31,7 @@ services:
     command: npm start
     networks:
       - webappnetwork
+    user: root
 networks:
     webappnetwork:
         driver: bridge
