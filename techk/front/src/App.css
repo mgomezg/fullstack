@@ -1,0 +1,87 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+#root {
+  background-color: #282c34;
+  min-height: 100vh;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+
+.ScraperCard{
+  text-align: center;
+  padding: 20px;
+}
+
+.ScraperCard Button{
+  margin-top: 25px;
+  margin-bottom: 5px;
+}
+
+.datatable-books{
+  min-height: 400px;
+}
+
+.gridContent{
+  margin: 30px 0px;
+}
+
+.w-100{
+  width: 100% !important;
+}
+
+.pt-4{
+  padding-top: 40px !important;
+}
+
+.book-description{
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  max-width: 400px;
+}
+
+.book-image{
+  height: 200px;
+}
+
+.scrapper-spinner{
+  position: absolute;
+  top:-6;
+  left: -25;
+  
+}
+
+.datatable-spinner{
+  position: absolute;
+  top: calc(50% - 72px);
+  left: calc(50% - 36px);
+  z-index: 1000 !important;
+  
+}
+
+.bgDataTable{
+  position: relative;
+}
+
+.overlay{
+  background-color: #000000a6;
+  z-index: 1000 !important;
+  position: relative;
+  top:0;
+}
+
+.footer{
+  margin-top: 30px;
+  background-color: #1a1c21 !important;
+}
