@@ -3,13 +3,20 @@ from .models import Log
 from urllib.parse import urlparse
 from django.db import IntegrityError
 from ..base.models import Book, Category
+from multiprocessing import Pool
+
 import requests
+import sys
 import re
+
 
 class Scraper:
 
     def __init__(self, basePath, actualPath):
-        
+
+        #config
+        sys.setrecursionlimit(10000)
+
         #delete data
         Book.objects.all().delete()
         Category.objects.all().delete()
@@ -49,9 +56,9 @@ class Scraper:
 
     def getBooks(self, booksActicle):
         books = booksActicle.select('article > h3 > a')
-        for book in books:
-            self.saveBook(book)
-    
+        p = Pool(processes=2)
+        p.map(self.saveBook, books)
+
     def getNextPage(self, pagerContainer):
         nextPage = pagerContainer.select('.next > a')
         try:
@@ -96,7 +103,7 @@ class Scraper:
         except (IndexError, AttributeError, TypeError) as e:
             self.createLog('getUPC', str(e) , 'Exception')
             return False
-        
+
         # get category - REQUIRED (if has exception, it won't save this book)
         try:
             category = Category.objects.get(name=category_name)
@@ -121,7 +128,7 @@ class Scraper:
             self.createLog('getStock', str(e) , 'Exception')
             stock = 0
 
-        # try to get description 
+        # try to get description
         try:
             description = BSHtml.select('#product_description')[0].findNext('p').get_text()
         except (IndexError, AttributeError, TypeError) as e:
@@ -143,7 +150,7 @@ class Scraper:
         except IntegrityError as e:
             self.createLog('createBook', 'No fue posible crear el libro: ' + title + '. ' +str(e) , 'Exception')
 
-    
+
     # Save category in BD
     def saveCategory(self, category):
         try:
@@ -153,7 +160,7 @@ class Scraper:
             self.createLog('createCategory', 'Se agregó la categoría: '+ newCategory.name , 'Log')
         except IntegrityError as e:
             self.createLog('createCategory', 'No fue posible crear la categoría: ' + category.get_text().strip() + '. ' +str(e) , 'Exception')
-            
+
 
     def getBooksRecursively(self, BSHtml):
 
@@ -170,10 +177,10 @@ class Scraper:
             nextPageUrl = self.basePath+nextPage
             nextBSHtml = self.getBSHtml(nextPageUrl)
             self.getBooksRecursively(nextBSHtml)
-    
+
     def createLog(self, pos, message, logType):
         log = Log()
         log.pos = pos
-        log.message = message 
+        log.message = message
         log.log_type = logType
         log.save()

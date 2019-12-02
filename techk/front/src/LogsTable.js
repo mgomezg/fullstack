@@ -4,7 +4,7 @@ import MUIDataTable from "mui-datatables";
 import 'toasted-notes/src/styles.css';
 
 import {
-    CircularProgress, Typography
+    CircularProgress
   } from '@material-ui/core'
 
 class LogsTable extends Component{
@@ -32,7 +32,7 @@ class LogsTable extends Component{
                 }
             },
         ];
-    
+
         const options = {
             filterType: 'select',
             print: false,

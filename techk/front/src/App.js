@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
-import Home from './Home';
+import ScrapBar from './ScrapBar';
 import BooksTable from './BooksTable';
 import LogsTable from './LogsTable';
 import { AppBar, Grid, Toolbar, Typography, BottomNavigation } from '@material-ui/core';
 import axios from 'axios'
-import toast from 'toasted-notes' 
+import toast from 'toasted-notes'
 import 'toasted-notes/src/styles.css';
 
 
@@ -26,7 +26,7 @@ class App extends Component {
     snackBarClass: '.info',
     logs: [],
   }
-  
+
 
   handleScrap(){
 
@@ -36,7 +36,7 @@ class App extends Component {
       scraperRunning : true,
       data :[],
     });
-    
+
     this.serverRequest = axios.get('/scraper')
       .then(function(response){
         console.log(response.data.status);
@@ -57,7 +57,7 @@ class App extends Component {
 
   updateData(){
     var th = this;
-    
+
     var newdata = [];
     this.serverRequest = axios.get('/api/books/?format=json')
       .then(function(response){
@@ -76,7 +76,7 @@ class App extends Component {
 
   updateLogs(){
     var th = this;
-    
+
     var logsData = [];
     this.serverRequest = axios.get('/api/logs/?format=json')
       .then(function(response){
@@ -131,7 +131,7 @@ class App extends Component {
         </AppBar>
         <Grid container justify="center" spacing={1} className="w-100 pt-4">
           <Grid item xs={11} md={10}>
-            <Home handleScrap={this.handleScrap.bind(this)} scraperRunning={this.state.scraperRunning}/>
+            <ScrapBar handleScrap={this.handleScrap.bind(this)} scraperRunning={this.state.scraperRunning}/>
           </Grid>
           <Grid item xs={11} md={10}>
             <BooksTable data={this.state.data} dataTableSearching={this.state.dataTableSearching}/>
@@ -145,7 +145,7 @@ class App extends Component {
       </Grid>
     );
   }
-  
+
 }
 
 export default App;

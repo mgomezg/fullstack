@@ -8,7 +8,7 @@ import './App.css';
 
 
 
-class Home extends Component{
+class ScrapBar extends Component{
     render(){
         return (
               <Card className="ScraperCard">
@@ -30,4 +30,4 @@ class Home extends Component{
 }
 
 
-export default Home;
+export default ScrapBar;
