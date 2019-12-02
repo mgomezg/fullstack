@@ -3,10 +3,10 @@
 ## Instrucciones de instalación
 Para la instalación del proyecto seguir los siguientes pasos:
 
-1.- git clone https://github.com/dfloresc/fullstack-challenge
-2.- cd /fullstack-challenge/techk/front
-3.- npm install
-4.- docker-compose up
+* 1.- git clone https://github.com/dfloresc/fullstack-challenge
+* 2.- cd /fullstack-challenge/techk/front
+* 3.- npm install
+* 4.- docker-compose up
 
 Con esto el proyecto debería ejecutar correctamente.
 
